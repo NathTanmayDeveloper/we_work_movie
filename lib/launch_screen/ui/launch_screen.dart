@@ -1,35 +1,60 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:we_work_movie/launch_screen/bloc/launch_screen_bloc.dart';
+import 'package:we_work_movie/launch_screen/bloc/launch_screen_event.dart';
+import 'package:we_work_movie/launch_screen/bloc/launch_screen_state.dart';
 
-class LaunchScreen extends StatelessWidget {
-  const LaunchScreen({super.key});
+class LaunchScreen extends StatefulWidget {
+  final launchScreenBloc = LaunchScreenBloc();
+  LaunchScreen({super.key});
+
+  @override
+  State<LaunchScreen> createState() => _LaunchScreenState();
+}
+
+class _LaunchScreenState extends State<LaunchScreen> {
+  @override
+  void initState() {
+    widget.launchScreenBloc.add(LaunchScreenInitialEvent());
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: AspectRatio(
-            aspectRatio: 1.0,
-            child: Container(
-              decoration:
-                  BoxDecoration(shape: BoxShape.circle, border: Border.all()),
-              child: Stack(
-                children: [
-                  // Logo
-                  Positioned.fill(
-                      child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Image.asset('assets/images/wework_logo.png'),
-                  )),
-                  // Circular Progress Indicator
-                  const Positioned.fill(
-                    // Adjust this value to position the indicator correctly
-                    child: CircularProgressWithDuration(
-                      duration: Duration(seconds: 10),
+    return BlocListener<LaunchScreenBloc, LaunchScreenState>(
+      bloc: widget.launchScreenBloc,
+      listener: (context, state) {
+        if (state is LaunchScreenInitialState) {
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text('Hi')));
+        }
+      },
+      child: Scaffold(
+        body: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(24.0),
+            child: AspectRatio(
+              aspectRatio: 1.0,
+              child: Container(
+                decoration:
+                    BoxDecoration(shape: BoxShape.circle, border: Border.all()),
+                child: Stack(
+                  children: [
+                    // Logo
+                    Positioned.fill(
+                        child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Image.asset('assets/images/wework_logo.png'),
+                    )),
+                    // Circular Progress Indicator
+                    const Positioned.fill(
+                      // Adjust this value to position the indicator correctly
+                      child: CircularProgressWithDuration(
+                        duration: Duration(seconds: 10),
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
