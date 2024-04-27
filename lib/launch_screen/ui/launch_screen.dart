@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:we_work_movie/launch_screen/bloc/launch_screen_bloc.dart';
 import 'package:we_work_movie/launch_screen/bloc/launch_screen_event.dart';
 import 'package:we_work_movie/launch_screen/bloc/launch_screen_state.dart';
+import 'package:we_work_movie/utility/location/location.dart';
 
 class LaunchScreen extends StatefulWidget {
   final launchScreenBloc = LaunchScreenBloc();
@@ -24,9 +25,18 @@ class _LaunchScreenState extends State<LaunchScreen> {
     return BlocListener<LaunchScreenBloc, LaunchScreenState>(
       bloc: widget.launchScreenBloc,
       listener: (context, state) {
-        if (state is LaunchScreenInitialState) {
-          ScaffoldMessenger.of(context)
-              .showSnackBar(SnackBar(content: Text('Hi')));
+        if (state is LaunchScreenAfterTryingPositionState) {
+          final afterTryingState = state;
+          switch (afterTryingState.locationDetails.permissionState) {
+            case CustomLocationPermissionState.permissionAllowed:
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  content: Text(
+                      'Latitude: ${afterTryingState.locationDetails.positionDetails?.latitude}')));
+              break;
+            default:
+              ScaffoldMessenger.of(context)
+                  .showSnackBar(SnackBar(content: Text('Permission Denied')));
+          }
         }
       },
       child: Scaffold(
